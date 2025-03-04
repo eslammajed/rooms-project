@@ -3,17 +3,17 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../modles/itme.dart';
+import '../models/room.dart';
 
-class Cropinformation extends StatefulWidget {
-  const Cropinformation({super.key, required this.Markets});
-  final itme Markets;
+class RoomInfoScreen extends StatefulWidget {
+  const RoomInfoScreen({super.key, required this.room});
+  final Room room;
 
   @override
-  State<Cropinformation> createState() => _CropinformationState();
+  State<RoomInfoScreen> createState() => _RoomInfoScreenState();
 }
 
-class _CropinformationState extends State<Cropinformation> {
+class _RoomInfoScreenState extends State<RoomInfoScreen> {
   final Color color = const Color.fromARGB(255, 76, 168, 175);
 
   @override
@@ -40,14 +40,14 @@ class _CropinformationState extends State<Cropinformation> {
                 child: Expanded(
                   child: kIsWeb
                       ? Image.network(
-                          widget.Markets.Images!,
+                          widget.room.image,
                           height: 100,
                           width: 100,
                           fit: BoxFit.fill,
                           alignment: Alignment.center,
                         )
                       : Image.file(
-                          File(widget.Markets.Images!),
+                          File(widget.room.image),
                           height: 200,
                           width: 50,
                           fit: BoxFit.fill,
@@ -56,13 +56,13 @@ class _CropinformationState extends State<Cropinformation> {
                 ),
               ),
               Mydivider(),
-              MyText('الوصف', widget.Markets.Name),
+              MyText('الاسم', widget.room.roomName),
               Mydivider(),
-              MyText('النوع', widget.Markets.Type),
+              MyText('الوصف', widget.room.description),
               Mydivider(),
-              MyText('السعر', widget.Markets.price),
+              MyText('السعر في الليلة', widget.room.pricePerNight),
               Mydivider(),
-              MyText('العنوان', widget.Markets.Address),
+              MyText('النوع ', widget.room.roomType),
               Mydivider(),
             ],
           ),
@@ -72,9 +72,9 @@ class _CropinformationState extends State<Cropinformation> {
   }
 
   // ignore: non_constant_identifier_names
-  Text MyText(String str, Markets) {
+  Text MyText(String str, rooms) {
     return Text(
-      '$str : $Markets',
+      '$str : $rooms',
       style: TextStyle(color: color, fontFamily: 'El Messiri', fontSize: 16),
     );
   }

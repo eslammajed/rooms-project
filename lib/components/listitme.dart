@@ -1,33 +1,36 @@
-import 'dart:io';
+// تجاهل قواعد التسمية لأننا نستخدم أسماء غير اعتيادية
+// ignore_for_file: non_constant_identifier_names
+// ignore: camel_case_types
 
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '/Processes/Adite.dart';
-import '/controllers/database_cntrollers.dart';
-import '../pages/Rooms.dart';
-import '../modles/itme.dart';
+import '../screen/adite_room_screen.dart';
+import '../data/database_cntrollers.dart';
+import '../screen/rooms_screen.dart';
+import '../models/room.dart';
 
-// ignore: camel_case_types
+// فئة listitme تُعرض عنصر (غرفة) في القائمة وتستجيب للنقر
 class listitme extends StatefulWidget {
-  // ignore: non_constant_identifier_names
-  listitme({super.key, required this.Itme, required this.ontap});
-  // ignore: non_constant_identifier_names
-  final itme Itme;
+  // المُنشئ يستقبل كائن itme (الغرفة) ودالة عند النقر (ontap)
+  listitme({super.key, required this.room, required this.ontap});
+
+  final Room room;
   final Function() ontap;
+
   @override
   State<listitme> createState() => _listitmeState();
 }
 
 class _listitmeState extends State<listitme> {
-  DBHElper dbhElper = DBHElper();
+  // مثيل من DBHelper لإجراء العمليات على قاعدة البيانات
+  DBHelper dbhElper = DBHelper();
 
-  void intistate() {
+  @override
+  void initState() {
     super.initState();
-    widget.Itme.Address;
-    widget.Itme.Images;
-    widget.Itme.Name;
-    widget.Itme.Type;
-    widget.Itme.price;
+    // يمكن استخدام بيانات widget.room في initState إذا أردت التهيئة بناءً عليها
+    // مثال: print(widget.room.Name);
   }
 
   @override
@@ -47,33 +50,26 @@ class _listitmeState extends State<listitme> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // عرض صورة الغرفة باستخدام Image.network إذا كان على الويب
+                  // أو Image.file إذا كان على الجهاز
                   Stack(
                     alignment: AlignmentDirectional.bottomCenter,
                     children: [
                       kIsWeb
                           ? Image.network(
-                              widget.Itme.Images!,
+                              widget.room.image,
                               height: 100,
                               width: 100,
                               fit: BoxFit.fill,
                               alignment: Alignment.center,
                             )
                           : Image.file(
-                              File(widget.Itme.Images!),
+                              File(widget.room.image),
                               height: 147,
                               width: 165,
                               fit: BoxFit.fill,
                               alignment: Alignment.center,
                             ),
-                      Container(
-                          alignment: AlignmentDirectional.bottomCenter,
-                          child: Text(
-                            widget.Itme.Date!,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'El Messiri',
-                                fontWeight: FontWeight.w900),
-                          )),
                     ],
                   ),
                 ],
@@ -82,61 +78,62 @@ class _listitmeState extends State<listitme> {
             Expanded(
               flex: 10,
               child: Container(
-                margin: const EdgeInsets.only(
-                  right: 10,
-                ),
+                margin: const EdgeInsets.only(right: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'الغرفة : ${widget.Itme.Name}',
+                      'اسم الغرفه : ${widget.room.roomName}',
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'El Messiri',
-                          fontSize: fsize),
+                        color: Colors.white,
+                        fontFamily: 'El Messiri',
+                        fontSize: fsize,
+                      ),
                     ),
                     Text(
-                      'النوع : ${widget.Itme.Type}',
+                      'نوع الغرفة : ${widget.room.roomType}',
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'El Messiri',
-                          fontSize: fsize),
+                        color: Colors.white,
+                        fontFamily: 'El Messiri',
+                        fontSize: fsize,
+                      ),
                     ),
                     Text(
-                      'العنون : ${widget.Itme.Address}',
+                      'السعر مقابل الليلة : ${widget.room.pricePerNight}',
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'El Messiri',
-                          fontSize: fsize),
+                        color: Colors.white,
+                        fontFamily: 'El Messiri',
+                        fontSize: fsize,
+                      ),
                     ),
                     Row(
                       children: [
                         IconButton(
-                            onPressed: () {
-                              setState(() {
-                                showDeleteConfirmationSnackBar(context);
-                              });
-                            },
-                            icon: Icon(Icons.delete)),
+                          onPressed: () {
+                            showDeleteConfirmationSnackBar(context);
+                          },
+                          icon: const Icon(Icons.delete),
+                        ),
+                        // زر تعديل العنصر
                         IconButton(
-                            onPressed: () {
-                              setState(() {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          IdetPage(rooms: widget.Itme),
-                                    ));
-                              });
-                            },
-                            icon: Icon(Icons.edit_square))
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AditeRroomScreen(room: widget.room),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.edit_square),
+                        ),
                       ],
                     )
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -145,13 +142,13 @@ class _listitmeState extends State<listitme> {
 
   void showDeleteConfirmationSnackBar(BuildContext context) {
     final snackBar = SnackBar(
-      content: Text('هل أنت متأكد من الحذف؟'),
+      content: const Text('هل أنت متأكد من الحذف؟'),
       action: SnackBarAction(
         label: 'نعم',
         onPressed: () {
-          dbhElper.DeletDataTable(widget.Itme.id!);
+          dbhElper.deleteRoom(widget.room.id!);
           Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => Rooms(),
+            builder: (context) => RoomsScreen(),
           ));
         },
       ),

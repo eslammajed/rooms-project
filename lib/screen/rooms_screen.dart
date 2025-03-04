@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import '/pages/homepage.dart';
-import '../controllers/database_cntrollers.dart';
-import '../Processes/Add_product.dart';
+import 'home_screen.dart';
+import '../data/database_cntrollers.dart';
+import 'add_room_screen.dart';
 import '../components/listitme.dart';
-import '../modles/itme.dart';
-import 'page.dart';
+import '../models/room.dart';
+import 'room_info_screen.dart';
 
-class Rooms extends StatefulWidget {
-  const Rooms({super.key});
+class RoomsScreen extends StatefulWidget {
+  const RoomsScreen({super.key});
 
   @override
-  State<Rooms> createState() => _RoomsState();
+  State<RoomsScreen> createState() => _RoomsScreenState();
 }
 
-class _RoomsState extends State<Rooms> {
-  DBHElper dbhElper = DBHElper();
+class _RoomsScreenState extends State<RoomsScreen> {
+  DBHelper dbhElper = DBHelper();
   int? currentPosition;
-  List<itme> rooms = [];
+  List<Room> rooms = [];
 
   @override
   void initState() {
     super.initState();
-    dbhElper.ShowDataTable().then((result) {
+    dbhElper.getRooms().then((result) {
       if (result.isNotEmpty) {
         rooms = result;
         setState(() {});
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,14 +66,14 @@ class _RoomsState extends State<Rooms> {
               itemCount: rooms.length,
               itemBuilder: (context, index) {
                 return listitme(
-                  Itme: rooms[index],
+                  room: rooms[index],
                   ontap: () {
                     currentPosition = index;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Cropinformation(
-                          Markets: rooms[currentPosition!],
+                        builder: (context) => RoomInfoScreen(
+                          room: rooms[currentPosition!],
                         ),
                       ),
                     );
@@ -89,7 +89,7 @@ class _RoomsState extends State<Rooms> {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => homeadd(),
+                      builder: (context) => AddRoom(),
                     ),
                   );
                 },

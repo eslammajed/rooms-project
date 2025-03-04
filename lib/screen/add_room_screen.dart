@@ -1,79 +1,50 @@
-// ignore_for_file: use_build_context_synchronously, must_be_immutable
+// ignore_for_file: use_build_context_synchronously, must_be_immutable, prefer_const_constructors_in_immutables
 
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../modles/itme.dart';
-import '../pages/Rooms.dart';
+import '../models/room.dart';
+import 'rooms_screen.dart';
 import '../widgets/Custom_button.dart';
-// ignore: unused_import
-import '../controllers/database_cntrollers.dart';
+import '../data/database_cntrollers.dart';
 
-// ignore: camel_case_types
-class homeadd extends StatefulWidget {
-  homeadd({super.key});
+class AddRoom extends StatefulWidget {
+  AddRoom({super.key});
 
   @override
-  State<homeadd> createState() => _homeaddState();
+  State<AddRoom> createState() => _AddRoomState();
 }
 
-class _homeaddState extends State<homeadd> {
-  itme? marr;
+class _AddRoomState extends State<AddRoom> {
+  Room? room;
   final picker = ImagePicker();
-  DBHElper dbhElper = DBHElper();
+  DBHelper dbhElper = DBHelper();
 
   void initstate() {
     super.initState();
   }
 
-  // ignore: non_constant_identifier_names
-  TextEditingController Name = TextEditingController();
-
-  // ignore: non_constant_identifier_names
-  TextEditingController Type = TextEditingController();
-
-  // ignore: non_constant_identifier_names
-  TextEditingController Quantity = TextEditingController();
-
-  // ignore: non_constant_identifier_names
-  TextEditingController Address = TextEditingController();
-
-  // ignore: non_constant_identifier_names
+  TextEditingController roomName = TextEditingController();
+  TextEditingController roomNumber = TextEditingController();
+  TextEditingController description = TextEditingController();
+  TextEditingController roomType = TextEditingController();
   File? Images;
   String? images;
-
-  // ignore: non_constant_identifier_names
-  TextEditingController Date = TextEditingController();
-
-  // ignore: non_constant_identifier_names
+  TextEditingController capacity = TextEditingController();
   TextEditingController Target = TextEditingController();
-
-  TextEditingController price = TextEditingController();
-
-  // ignore: non_constant_identifier_names
-  String Mydate() {
-    DateTime time = DateTime.now();
-
-// تحويل الوقت إلى شكل نصي
-    String timeStr = time.toString();
-
-// استخراج السنة والشهر واليوم والساعة والدقيقة من النص
-    return timeStr.substring(0, 16);
-  }
-
-  // تعريف مثيل من ImagePicker
+  TextEditingController pricePerNight = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('اضافة منتج'),
+        title: const Text('  اضافة غرفة '),
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop(MaterialPageRoute(
-              builder: (context) => Rooms(),
+              builder: (context) => RoomsScreen(),
             ));
           },
           icon: Icon(Icons.arrow_back_sharp),
@@ -85,31 +56,31 @@ class _homeaddState extends State<homeadd> {
           child: ListView(
             children: <Widget>[
               TextFormField(
-                controller: Name,
+                controller: roomName,
                 decoration: const InputDecoration(
-                  hintText: "اسم المنتج",
+                  hintText: "اسم الغرفة",
                 ),
               ),
               const SizedBox(height: 10),
               TextFormField(
-                controller: Type,
-                decoration: const InputDecoration(
-                  hintText: "نوع المنتح",
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: Quantity,
+                controller: roomNumber,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  hintText: "كمية المنتح",
+                  hintText: "رقم الغرفة",
                 ),
               ),
               const SizedBox(height: 10),
               TextFormField(
-                controller: Address,
+                controller: description,
                 decoration: const InputDecoration(
-                  hintText: "العنوان",
+                  hintText: " الوصف",
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: roomType,
+                decoration: const InputDecoration(
+                  hintText: "نوع الغرفة",
                 ),
               ),
               const SizedBox(height: 10),
@@ -140,42 +111,43 @@ class _homeaddState extends State<homeadd> {
               ),
               const SizedBox(height: 10),
               TextFormField(
-                controller: Target,
+                controller: pricePerNight,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
-                  hintText: "الهدف",
+                  hintText: "سعر اللية ",
                 ),
               ),
               const SizedBox(height: 10),
               TextFormField(
-                controller: price,
+                controller: capacity,
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
-                  hintText: "السعر",
+                  hintText: "السعة",
                 ),
               ),
               const SizedBox(height: 10),
               CustomButton(
-                text: "اضافة المنتج",
+                text: "اضافة الغرفة",
                 ontap: () {
-                  if (Name.text.isEmpty) {
+                  if (roomName.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('يرجى إدخال اسم المنتج')),
+                      const SnackBar(content: Text('يرجى إدخال اسم الغرفة')),
                     );
                     return;
                   }
-                  if (Type.text.isEmpty) {
+                  if (roomType.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('يرجى إدخال نوع المنتج')),
+                      const SnackBar(content: Text('يرجى إدخال النوع')),
                     );
                     return;
                   }
-                  if (Quantity.text.isEmpty) {
+                  if (description.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('يرجى إدخال كمية المنتج')),
+                      const SnackBar(content: Text('يرجى إدخال الوصف ')),
                     );
                     return;
                   }
-                  if (Address.text.isEmpty) {
+                  if (roomName.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('يرجى إدخال العنوان')),
                     );
@@ -183,42 +155,39 @@ class _homeaddState extends State<homeadd> {
                   }
                   if (Images == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('يرجى اختيار صورة المنتج')),
+                      const SnackBar(content: Text('يرجى اختيار صورة الغرفة')),
                     );
                     return;
                   }
-                  if (Target.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('يرجى إدخال الهدف')),
-                    );
-                    return;
-                  }
-                  if (price.text.isEmpty) {
+                  if (pricePerNight.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('يرجى إدخال السعر')),
                     );
                     return;
                   }
+                  if (capacity.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('يرجى إدخال السعة')),
+                    );
+                    return;
+                  }
                   try {
-                    // ... (بقية الكود)
                     setState(() {
-                      dbhElper.InsertTable(itme(
-                          Name: Name.text,
-                          Type: Type.text,
-                          Quantity: int.parse(Quantity.text),
-                          price: double.parse(price.text),
-                          Address: Address.text,
-                          Images: images,
-                          Date: Mydate(),
-                          Target: Target.text));
+                      dbhElper.insertRoom(Room(
+                          roomNumber: int.parse(roomNumber.text),
+                          roomName: roomName.text,
+                          description: description.text,
+                          roomType: roomType.text,
+                          capacity: int.parse(capacity.text),
+                          pricePerNight: double.parse(pricePerNight.text),
+                          image: images!));
                     });
-                    // إظهار رسالة "تمت الإضافة بنجاح"
                     showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
                           title: Text("تمت الإضافة"),
-                          content: Text("تم إضافة المنتج بنجاح"),
+                          content: Text("تم إضافة الغرفة بنجاح"),
                           actions: <Widget>[
                             ElevatedButton(
                               child: Text("تم"),
@@ -226,7 +195,7 @@ class _homeaddState extends State<homeadd> {
                                 CLeaningData();
                                 Navigator.of(context)
                                     .pushReplacement(MaterialPageRoute(
-                                  builder: (context) => Rooms(),
+                                  builder: (context) => RoomsScreen(),
                                 ));
                               },
                             ),
@@ -269,11 +238,11 @@ class _homeaddState extends State<homeadd> {
   }
 
   void CLeaningData() {
-    Name.clear();
-    price.clear();
-    Quantity.clear();
-    Type.clear();
-    Date.clear();
-    Target.clear();
+    roomName.clear();
+    roomNumber.clear();
+    description.clear();
+    roomType.clear();
+    pricePerNight.clear();
+    capacity.clear();
   }
 }

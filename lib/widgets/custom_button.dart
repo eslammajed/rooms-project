@@ -23,6 +23,9 @@ class CustomButton extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 23, color: Color.fromARGB(255, 0, 0, 0)),
           ),
+          SizedBox(
+            width: 10,
+          ),
           icon,
         ]),
       ),

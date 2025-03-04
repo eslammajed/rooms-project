@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
-class category extends StatelessWidget {
-  const category(
+class Service extends StatelessWidget {
+  const Service(
       {super.key,
       required this.name_category,
       required this.D_category,
